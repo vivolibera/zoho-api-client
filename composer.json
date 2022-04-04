@@ -1,0 +1,25 @@
+{
+    "name": "vivolibera/zoho-api-client",
+    "description": "An api client for Zoho",
+    "authors": [
+        {
+            "name": "Simon Erhardt",
+            "email": "simon@simon-erhardt.com",
+            "homepage": "https://www.vivolibera.com",
+            "role": "Developer"
+        }
+    ],
+    "license": [
+       "LGPL-2.1-only",
+       "GPL-3.0-or-later"
+    ],
+    "autoload": {
+        "psr-4": {
+            "ZohoApiClient\\": "src/ZohoApiClient"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}
