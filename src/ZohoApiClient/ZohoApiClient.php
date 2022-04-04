@@ -10,10 +10,15 @@ class ZohoApiClient
     public Client $accountsClient;
     public ?Client $apiClient = null;
 
-    public function __construct() {
+    public function __construct(
+        $zohoDomain = "us",
+        $clientId = null,
+        $clientSecret = null,
+        $refreshToken = null
+    ) {
         $this->accountsClient = new Client([
             // Base URI is used with relative requests
-            'base_uri' => 'https://accounts.zoho.' . $_ENV['ZOHO_DOMAIN'] . '/',
+            'base_uri' => 'https://accounts.zoho.' . $zohoDomain . '/',
             // You can set any number of default request options.
             'timeout'  => 2.0,
             'headers' => [
@@ -21,16 +26,16 @@ class ZohoApiClient
             ]
         ]);
 
-        if(isset($_ENV['ZOHO_REFRESH_TOKEN'])) {
+        if(!is_null($refreshToken)) {
             $accessToken = $this->getOAuthTokenByRefreshToken(
-                $_ENV['ZOHO_CLIENT_ID'],
-                $_ENV['ZOHO_CLIENT_SECRET'],
-                $_ENV['ZOHO_REFRESH_TOKEN']
+                $clientId,
+                $clientSecret,
+                $refreshToken
             );
 
             $this->apiClient = new Client([
                 // Base URI is used with relative requests
-                'base_uri' => 'https://www.zohoapis.' . $_ENV['ZOHO_DOMAIN'] . '/',
+                'base_uri' => 'https://www.zohoapis.' . $zohoDomain . '/',
                 // You can set any number of default request options.
                 'timeout'  => 2.0,
                 'headers' => [
