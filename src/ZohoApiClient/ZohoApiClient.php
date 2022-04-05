@@ -172,7 +172,7 @@ class ZohoApiClient
         return $customers;
     }
 
-    public function createCustomer(Account $customer) {
+    public function createOrUpdateCustomer(Account $customer) {
         if($this->apiClient == null) {
             throw new ZohoApiClientException("createCustomer() => refresh token not set!");
         }
@@ -194,12 +194,15 @@ class ZohoApiClient
         }
 
         // post data
-        $res = $this->apiClient->post('/crm/v2/accounts', [
+        $res = $this->apiClient->post('/crm/v2/accounts/upsert', [
             'body' => '{"data": [{' . implode(",", $customerData) . '}]}'
         ]);
 
-        if($res->getStatusCode() != 201) {
-            throw new ZohoApiClientException("createCustomer() => status code != 201");
+        if (
+            $res->getStatusCode() != 200
+            && $res->getStatusCode() != 201
+        ) {
+            throw new ZohoApiClientException("createOrUpdateCustomer() => status code != 200/201");
         }
     }
 }
