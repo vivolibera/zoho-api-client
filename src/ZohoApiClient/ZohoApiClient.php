@@ -198,7 +198,7 @@ class ZohoApiClient
                 $contact['id'],
                 $contact['First_Name'],
                 $contact['Last_Name'],
-                $contact['Salutation'],
+                $contact['Salutation'] ?? null,
                 $contact['Mailing_Street'] ?? null,
                 $contact['Mailing_Zip'] ?? null,
                 $contact['Mailing_City'] ?? null,
@@ -248,6 +248,65 @@ class ZohoApiClient
             && $res->getStatusCode() != 201
         ) {
             throw new ZohoApiClientException("createOrUpdateCustomer() => status code != 200/201");
+        }
+    }
+
+    public function createOrUpdateContact(Contact $contact) {
+        if($this->apiClient == null) {
+            throw new ZohoApiClientException("createOrUpdateContact() => refresh token not set!");
+        }
+
+        // create default customer fields
+        $contactFields = array();
+        $contactFields["First_Name"] = $contact->getFirstName();
+        $contactFields["Last_Name"] = $contact->getLastName();
+
+        if(!is_null($contact->getMailingStreet())) {
+            $contactFields["Mailing_Street"] = $contact->getMailingStreet();
+        }
+
+        if(!is_null($contact->getMailingZip())) {
+            $contactFields["Mailing_Zip"] = $contact->getMailingZip();
+        }
+
+        if(!is_null($contact->getMailingCity())) {
+            $contactFields["Mailing_City"] = $contact->getMailingCity();
+        }
+
+        if(!is_null($contact->getMailingCountry())) {
+            $contactFields["Mailing_Country"] = $contact->getMailingCountry();
+        }
+
+        if(!is_null($contact->getPhone())) {
+            $contactFields["Phone"] = $contact->getPhone();
+        }
+
+        if(!is_null($contact->getMobile())) {
+            $contactFields["Mobile"] = $contact->getMobile();
+        }
+
+        if(!is_null($contact->getEmail())) {
+            $contactFields["Mobile"] = $contact->getEmail();
+        }
+
+        $contactFields = array_merge($contactFields, $contact->getRawData());
+
+        // merge data
+        $contactData = array();
+        foreach($contactFields as $key => $value) {
+            $contactData[] = sprintf('"%s": "%s"', $key, $value);
+        }
+
+        // post data
+        $res = $this->apiClient->post('/crm/v2/contacts/upsert', [
+            'body' => '{"data": [{' . implode(",", $contactData) . '}]}'
+        ]);
+
+        if (
+            $res->getStatusCode() != 200
+            && $res->getStatusCode() != 201
+        ) {
+            throw new ZohoApiClientException("createOrUpdateContact() => status code != 200/201");
         }
     }
 }
