@@ -180,7 +180,7 @@ class ZohoApiClient
         // create default customer fields
         $customerFields = array();
         $customerFields["Account_Name"] = $customer->getName();
-        $customerFields["Billing_Street"] = $customer->getAddress1();
+        $customerFields["Billing_Street"] = $customer->getAddress();
         $customerFields["Billing_City"] = $customer->getCity();
         $customerFields["Billing_Code"] = $customer->getZipCode();
         $customerFields["Billing_Country"] = $customer->getCountry();
