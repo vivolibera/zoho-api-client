@@ -172,7 +172,7 @@ class ZohoApiClient
         return $customers;
     }
 
-    public function createCustomer(Account $customer, $optionalFields = []) {
+    public function createCustomer(Account $customer) {
         if($this->apiClient == null) {
             throw new ZohoApiClientException("createCustomer() => refresh token not set!");
         }
@@ -185,7 +185,7 @@ class ZohoApiClient
         $customerFields["Billing_Code"] = $customer->getZipCode();
         $customerFields["Billing_Country"] = $customer->getCountry();
         $customerFields["Phone"] = $customer->getPhone();
-        $customerFields = array_merge($customerFields, $optionalFields);
+        $customerFields = array_merge($customerFields, $customer->getRawData());
 
         // merge data
         $customerData = array();
