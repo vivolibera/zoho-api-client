@@ -2,8 +2,10 @@
 
 namespace ZohoApiClient;
 
-use ZohoApiClient\Entities\Account;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use ZohoApiClient\Entities\Account;
+use ZohoApiClient\Entities\Contact;
 
 class ZohoApiClient
 {
@@ -122,11 +124,11 @@ class ZohoApiClient
     /**
      * @return Account[]
      * @throws ZohoApiClientException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getAccounts(): array {
         if($this->apiClient == null) {
-            throw new ZohoApiClientException("createCustomer() => refresh token not set!");
+            throw new ZohoApiClientException("getAccounts() => refresh token not set!");
         }
 
         $res = $this->apiClient->get('/crm/v2/accounts');
@@ -170,6 +172,49 @@ class ZohoApiClient
         }
 
         return $customers;
+    }
+
+    /**
+     * @return Contact[]
+     * @throws ZohoApiClientException
+     * @throws GuzzleException
+     */
+    public function getContacts(): array {
+        if($this->apiClient == null) {
+            throw new ZohoApiClientException("getContacts() => refresh token not set!");
+        }
+
+        $res = $this->apiClient->get('/crm/v2/contacts');
+
+        if($res->getStatusCode() != 200) {
+            throw new ZohoApiClientException("getContacts() => status code != 200");
+        }
+
+        $data = json_decode((string) $res->getBody(), true);
+
+        $contacts = [];
+        foreach($data['data'] as $contact) {
+            $contacts[] = new Contact(
+                $contact['id'],
+                $contact['First_Name'],
+                $contact['Last_Name'],
+                $contact['Salutation'],
+                $contact['Mailing_Street'] ?? null,
+                $contact['Mailing_Zip'] ?? null,
+                $contact['Mailing_City'] ?? null,
+                $contact['Mailing_Country'] ?? null,
+                $contact['Email'] ?? null,
+                $contact['Phone'] ?? null,
+                $contact['Mobile'] ?? null,
+                isset($contact['Account_Name']) ? new Account(
+                    $contact['Account_Name']['id'],
+                    $contact['Account_Name']['name']
+                ) : null,
+                $contact
+            );
+        }
+
+        return $contacts;
     }
 
     public function createOrUpdateCustomer(Account $customer) {
