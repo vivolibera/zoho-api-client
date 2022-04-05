@@ -2,7 +2,7 @@
 
 namespace ZohoApiClient;
 
-use ZohoApiClient\Entities\Customer;
+use ZohoApiClient\Entities\Account;
 use GuzzleHttp\Client;
 
 class ZohoApiClient
@@ -120,7 +120,7 @@ class ZohoApiClient
     }
 
     /**
-     * @return Customer[]
+     * @return Account[]
      * @throws ZohoApiClientException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -139,7 +139,7 @@ class ZohoApiClient
 
         $customers = [];
         foreach($data['data'] as $customer) {
-            $c = new Customer($customer['id']);
+            $c = new Account($customer['id']);
             $c->setRawData($customer);
 
             if(isset($customer['Account_Name'])) {
@@ -172,7 +172,7 @@ class ZohoApiClient
         return $customers;
     }
 
-    public function createCustomer(Customer $customer, $optionalFields = []) {
+    public function createCustomer(Account $customer, $optionalFields = []) {
         if($this->apiClient == null) {
             throw new ZohoApiClientException("createCustomer() => refresh token not set!");
         }

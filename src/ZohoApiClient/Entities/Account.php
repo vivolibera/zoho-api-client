@@ -2,7 +2,7 @@
 
 namespace ZohoApiClient\Entities;
 
-class Customer
+class Account
 {
     public string $id;
     public string $name;
@@ -43,9 +43,9 @@ class Customer
 
     /**
      * @param string $id
-     * @return Customer
+     * @return Account
      */
-    public function setId(string $id): Customer
+    public function setId(string $id): Account
     {
         $this->id = $id;
         return $this;
@@ -61,9 +61,9 @@ class Customer
 
     /**
      * @param string $name
-     * @return Customer
+     * @return Account
      */
-    public function setName(string $name): Customer
+    public function setName(string $name): Account
     {
         $this->name = $name;
         return $this;
@@ -79,9 +79,9 @@ class Customer
 
     /**
      * @param string $address
-     * @return Customer
+     * @return Account
      */
-    public function setAddress(string $address): Customer
+    public function setAddress(string $address): Account
     {
         $this->address = $address;
         return $this;
@@ -97,9 +97,9 @@ class Customer
 
     /**
      * @param string $zipCode
-     * @return Customer
+     * @return Account
      */
-    public function setZipCode(string $zipCode): Customer
+    public function setZipCode(string $zipCode): Account
     {
         $this->zipCode = $zipCode;
         return $this;
@@ -115,9 +115,9 @@ class Customer
 
     /**
      * @param string $city
-     * @return Customer
+     * @return Account
      */
-    public function setCity(string $city): Customer
+    public function setCity(string $city): Account
     {
         $this->city = $city;
         return $this;
@@ -133,9 +133,9 @@ class Customer
 
     /**
      * @param string $country
-     * @return Customer
+     * @return Account
      */
-    public function setCountry(string $country): Customer
+    public function setCountry(string $country): Account
     {
         $this->country = $country;
         return $this;
@@ -151,9 +151,9 @@ class Customer
 
     /**
      * @param string $phone
-     * @return Customer
+     * @return Account
      */
-    public function setPhone(string $phone): Customer
+    public function setPhone(string $phone): Account
     {
         $this->phone = $phone;
         return $this;
@@ -169,9 +169,9 @@ class Customer
 
     /**
      * @param array $rawData
-     * @return Customer
+     * @return Account
      */
-    public function setRawData(array $rawData): Customer
+    public function setRawData(array $rawData): Account
     {
         $this->rawData = $rawData;
         return $this;
