@@ -217,20 +217,20 @@ class ZohoApiClient
         return $contacts;
     }
 
-    public function createOrUpdateCustomer(Account $customer) {
+    public function createOrUpdateAccount(Account $account) : string {
         if($this->apiClient == null) {
-            throw new ZohoApiClientException("createCustomer() => refresh token not set!");
+            throw new ZohoApiClientException("createOrUpdateAccount() => refresh token not set!");
         }
 
         // create default customer fields
         $customerFields = array();
-        $customerFields["Account_Name"] = $customer->getName();
-        $customerFields["Billing_Street"] = $customer->getAddress();
-        $customerFields["Billing_City"] = $customer->getCity();
-        $customerFields["Billing_Code"] = $customer->getZipCode();
-        $customerFields["Billing_Country"] = $customer->getCountry();
-        $customerFields["Phone"] = $customer->getPhone();
-        $customerFields = array_merge($customerFields, $customer->getRawData());
+        $customerFields["Account_Name"] = $account->getName();
+        $customerFields["Billing_Street"] = $account->getAddress();
+        $customerFields["Billing_City"] = $account->getCity();
+        $customerFields["Billing_Code"] = $account->getZipCode();
+        $customerFields["Billing_Country"] = $account->getCountry();
+        $customerFields["Phone"] = $account->getPhone();
+        $customerFields = array_merge($customerFields, $account->getRawData());
 
         // merge data
         $customerData = array();
@@ -247,11 +247,19 @@ class ZohoApiClient
             $res->getStatusCode() != 200
             && $res->getStatusCode() != 201
         ) {
-            throw new ZohoApiClientException("createOrUpdateCustomer() => status code != 200/201");
+            throw new ZohoApiClientException("createOrUpdateAccount() => status code != 200/201");
         }
+
+        $ret = json_decode((string) $res->getBody(), true);
+
+        if($ret['data'][0]['status'] != 'success') {
+            throw new ZohoApiClientException(sprintf("createOrUpdateAccount() => error: %s", $ret['data'][0]['message']));
+        }
+
+        return $ret['data'][0]['details']['id'];
     }
 
-    public function createOrUpdateContact(Contact $contact) {
+    public function createOrUpdateContact(Contact $contact) : string {
         if($this->apiClient == null) {
             throw new ZohoApiClientException("createOrUpdateContact() => refresh token not set!");
         }
@@ -286,7 +294,7 @@ class ZohoApiClient
         }
 
         if(!is_null($contact->getEmail())) {
-            $contactFields["Mobile"] = $contact->getEmail();
+            $contactFields["Email"] = $contact->getEmail();
         }
 
         $contactFields = array_merge($contactFields, $contact->getRawData());
@@ -295,6 +303,17 @@ class ZohoApiClient
         $contactData = array();
         foreach($contactFields as $key => $value) {
             $contactData[] = sprintf('"%s": "%s"', $key, $value);
+        }
+
+        if(
+            !is_null($contact->getAccount())
+            && !is_null($contact->getAccount()->getId())
+        ) {
+            $accountData = json_encode([
+                "id" => $contact->getAccount()->getId()
+            ], JSON_FORCE_OBJECT);
+
+            $contactData[] = sprintf('"Account_Name": %s', $accountData);
         }
 
         // post data
@@ -308,5 +327,13 @@ class ZohoApiClient
         ) {
             throw new ZohoApiClientException("createOrUpdateContact() => status code != 200/201");
         }
+
+        $ret = json_decode((string) $res->getBody(), true);
+
+        if($ret['data'][0]['status'] != 'success') {
+            throw new ZohoApiClientException(sprintf("createOrUpdateContact() => error: %s", $ret['data'][0]['message']));
+        }
+
+        return $ret['data'][0]['details']['id'];
     }
 }

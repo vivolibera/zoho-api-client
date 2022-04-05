@@ -4,7 +4,7 @@ namespace ZohoApiClient\Entities;
 
 class Contact
 {
-    private int $id;
+    private ?int $id;
     private string $firstName;
     private string $lastName;
     private ?string $salutation;
@@ -19,7 +19,7 @@ class Contact
     private array $rawData;
 
     /**
-     * @param int $id
+     * @param int|null $id
      * @param string $firstName
      * @param string $lastName
      * @param string|null $salutation
@@ -34,7 +34,7 @@ class Contact
      * @param array $rawData
      */
     public function __construct(
-        int $id,
+        ?int $id,
         string $firstName,
         string $lastName,
         ?string $salutation,
@@ -64,9 +64,9 @@ class Contact
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
